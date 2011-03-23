@@ -70,11 +70,24 @@ router.get('thoms/likes', function (request, response) {
     });
     parser.addListener('end', function(result) {
       response.writeHead(200);
+
+
+      var header = [
+        '<!DOCTYPE NETSCAPE-Bookmark-file-1>',
+        '<!-- This is an automatically generated file.',
+        '     It will be read and overwritten.',
+        '     DO NOT EDIT! -->',
+        '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">',
+        '<TITLE>Bookmarks</TITLE>',
+        '<H1>Bookmarks</H1>',
+        '<DL><p>',
+      ];
+      response.write(header.join('\n') + '\n');
       if (!result.posts.post) { return response.end(''); }
       result.posts.post.forEach(function (post) {
         response.write(tumblr.serialize(post) + '\n');
       });
-      response.end();
+      response.end('</DL><p>\n');
     });
   });
   crequest.end();

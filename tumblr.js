@@ -23,7 +23,7 @@ var video = function (post) {
   return (link.indexOf('http') == 0) ? link : regular(post);
 };
 
-exports.serialize = function (post) {
+var getUrl = function (post) {
   switch (post['@'].type) {
     case 'link':
       return link(post);
@@ -33,4 +33,8 @@ exports.serialize = function (post) {
       return video(post);
   }
   return regular(post);
+};
+
+exports.serialize = function (post) {
+  return sys.inspect(post);
 };
