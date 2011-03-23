@@ -25,10 +25,6 @@ var video = function (post) {
 
 exports.serialize = function (post) {
   switch (post['@'].type) {
-    case 'quote':
-    case 'conversation':
-    case 'regular':
-      return regular(post);
     case 'link':
       return link(post);
     case 'photo':
@@ -36,5 +32,5 @@ exports.serialize = function (post) {
     case 'video':
       return video(post);
   }
-  return sys.inspect(post);
+  return regular(post);
 };
