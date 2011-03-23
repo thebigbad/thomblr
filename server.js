@@ -4,6 +4,7 @@ var sys = require('sys'),
     path = require('path'),
     urlParse = require('url').parse,
     paperboy = require('paperboy'),
+    mustache = require('../Mu/lib/mu'),
     xml2js = require('xml2js'),
     webroot = path.join(path.dirname(__filename), 'static'),
     router = require('./router'),
@@ -36,6 +37,7 @@ router.get('thoms/fav.png', sendStatic);
 /**
  * the one and only interesting call
  **/
+var template = mustache.compileText('<<DT><A HREF="{{url}}">{{title}}</A>\n');
 
 router.get('thoms/likes', function (request, response) {
   var url = urlParse(request.url, true);
@@ -85,10 +87,12 @@ router.get('thoms/likes', function (request, response) {
       response.write(header.join('\n') + '\n');
       if (!result.posts.post) { return response.end(''); }
       result.posts.post.forEach(function (post) {
-        response.write(tumblr.serialize(post) + '\n');
+        response.write(tumblr.serialize(post));
       });
       response.end('</DL><p>\n');
     });
   });
   crequest.end();
 });
+
+

@@ -1,40 +1,66 @@
 var sys = require('sys');
 
-var regular = function (post) {
-  return post['@'].url;
-};
-
-var link = function (post) {
-  return post['link-url'];
-};
-
-var photo = function (post) {
-  var tumblelog = post.tumblelog['@'].url.replace(/\/$/, ''),
-      generic = post['photo-url'][0]['#'],
-      link = post['photo-link-url'];
-  if (!link || tumblelog == link.replace(/\/$/, '')) {
-    return generic;
-  };
-  return link;
-};
-
-var video = function (post) {
-  var link = post['video-source'];
-  return (link.indexOf('http') == 0) ? link : regular(post);
+var url = {
+  regular: function (post) { return post['@'].url; },
+  link: function (post) { return post['link-url']; },
+  photo: function (post) {
+    var tumblelog = post.tumblelog['@'].url.replace(/\/$/, ''),
+        generic = post['photo-url'][0]['#'],
+        link = post['photo-link-url'];
+    if (!link || tumblelog == link.replace(/\/$/, '')) {
+      return generic;
+    };
+    return link;
+  },
+  video: function (post) {
+    var link = post['video-source'];
+    return (link.indexOf('http') == 0) ? link : url.regular(post);
+  }
 };
 
 var getUrl = function (post) {
   switch (post['@'].type) {
     case 'link':
-      return link(post);
+      return url.link(post);
     case 'photo':
-      return photo(post);
+      return url.photo(post);
     case 'video':
-      return video(post);
+      return url.video(post);
   }
-  return regular(post);
+  return url.regular(post);
+};
+
+var title = {
+  none: getUrl,
+  regular: function (post) {
+    var t = post['regular-title'];
+    return (t) ? t : title.none(post);
+  },
+  link: function (post) {
+    var t = post['link-text'];
+    return (t) ? t : title.none(post);
+  },
+  conversation: function (post) {
+    var t = post['conversation-title'];
+    return (t) ? t : title.none(post);
+  }
+};
+
+var getTitle = function (post) {
+  switch (post['@'].type) {
+    case 'quote':
+    case 'photo':
+      return title.none(post);
+    case 'regular':
+      return title.regular(post);
+    case 'link':
+      return title.link(post);
+    case 'conversation':
+      return title.conversation(post);
+  }
+  return sys.inspect(post);
 };
 
 exports.serialize = function (post) {
-  return sys.inspect(post);
+  return sys.inspect({ url: getUrl(post), title: getTitle(post) }) + '\n';
 };
