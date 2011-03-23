@@ -18,6 +18,11 @@ var photo = function (post) {
   return link;
 };
 
+var video = function (post) {
+  var link = post['video-source'];
+  return (link.indexOf('http') == 0) ? link : regular(post);
+};
+
 exports.serialize = function (post) {
   switch (post['@'].type) {
     case 'quote':
@@ -28,6 +33,8 @@ exports.serialize = function (post) {
       return link(post);
     case 'photo':
       return photo(post);
+    case 'video':
+      return video(post);
   }
   return sys.inspect(post);
 };
