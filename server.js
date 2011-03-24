@@ -4,7 +4,6 @@ var sys = require('sys'),
     path = require('path'),
     urlParse = require('url').parse,
     paperboy = require('paperboy'),
-    mustache = require('../Mu/lib/mu'),
     xml2js = require('xml2js'),
     webroot = path.join(path.dirname(__filename), 'static'),
     router = require('./router'),
@@ -31,15 +30,13 @@ var sendStatic = function (request, response) {
  * static assets
  **/
 
-router.get('thoms/index.html', sendStatic);
-router.get('thoms/fav.png', sendStatic);
+router.get('thomblr/index.html', sendStatic);
+router.get('thomblr/fav.png', sendStatic);
 
 /**
  * the one and only interesting call
  **/
-var template = mustache.compileText('<<DT><A HREF="{{url}}">{{title}}</A>\n');
-
-router.get('thoms/likes', function (request, response) {
+router.get('thomblr/bookmarks.html', function (request, response) {
   var url = urlParse(request.url, true);
   if (!url.query) {
     response.writeHead(400);
@@ -87,12 +84,18 @@ router.get('thoms/likes', function (request, response) {
       response.write(header.join('\n') + '\n');
       if (!result.posts.post) { return response.end(''); }
       result.posts.post.forEach(function (post) {
-        response.write(tumblr.serialize(post));
+        var link = tumblr.serialize(post);
+        var html = [
+          '<DT><A HREF="',
+          link.url.replace('"', '\\"'),
+          '">',
+          link.title.replace('<', '&lt;').replace('>', '&gt;'),
+          '</A>\n'
+        ].join('');
+        response.write(html);
       });
       response.end('</DL><p>\n');
     });
   });
   crequest.end();
 });
-
-

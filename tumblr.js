@@ -43,24 +43,27 @@ var title = {
   conversation: function (post) {
     var t = post['conversation-title'];
     return (t) ? t : title.none(post);
+  },
+  video: function (post) {
+    var t = post['video-title'];
+    return (t) ? t : title.none(post);
   }
 };
 
 var getTitle = function (post) {
   switch (post['@'].type) {
-    case 'quote':
-    case 'photo':
-      return title.none(post);
     case 'regular':
       return title.regular(post);
     case 'link':
       return title.link(post);
     case 'conversation':
       return title.conversation(post);
+    case 'video':
+      return title.video(post);
   }
-  return sys.inspect(post);
+  return title.none(post);
 };
 
 exports.serialize = function (post) {
-  return sys.inspect({ url: getUrl(post), title: getTitle(post) }) + '\n';
+  return { url: getUrl(post), title: getTitle(post) };
 };

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>thoms | convert yr tumblr &hearts; to bookmrks</title>
+    <title>thomblr | convert yr tumblr &hearts; to bookmrks</title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
     <script type="text/javascript">
       $(document).ready(function () {
@@ -10,7 +10,7 @@
         var handleChange = function () {
           var email = encodeURIComponent(e.val() || ''),
               password = encodeURIComponent(p.val() || '');
-          l.attr('href', 'likes?email=' + email + '&password=' + password);
+          l.attr('href', 'bookmarks.html?email=' + email + '&password=' + password);
         };
         $.each(['focus', 'blur', 'keyup', 'change', 'click'], function (i, e) {
           $('#email, #password')[e](handleChange);
@@ -19,12 +19,12 @@
     </script>
   </head>
   <body>
-    <h1>thoms</h1>
+    <h1>thomblr</h1>
     <h2>convrt yr tumblr <img src="fav.png" /> to bookmrks</h2>
     <ol>
       <li><input id="email" size="30" type="text" placeholder="enter your tumblr email address" /></li>
       <li><input id="password" size="30" type="password" placeholder="enter your tumblr password" /></li>
-      <li>save <a id="likes" href="likes?email=foo&password=bar" target="_blank">this tab</a> as "bookmarks.html"</li>
+      <li>save <a id="likes" href="bookmarks.html?email=foo&password=bar" target="_blank">this tab</a> as "bookmarks.html"</li>
       <li>follow the instructions on <a href="http://www.google.com/support/chrome/bin/answer.py?hl=en&answer=96816" target="_blank">this tab</a> to import "bookmarks.html"</li>
     </ol>
   </body>
