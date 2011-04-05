@@ -18,17 +18,18 @@ paperboy.filepath = function (webroot, urlString) {
   return([null, fp]);
 };
 
-var getPage = function (email, password, offset, size, data, end) {
+var getPage = function (email, password, offset, data, end) {
   var path = [
     '/api/likes?email=',
     email,
     '&password=',
     password,
-    '&size=',
-    size,
     '&start=',
-    offset
+    offset,
+    '&num=',
+    50
   ].join('');
+  console.log(email);
   var client = http.createClient(80, 'www.tumblr.com');
   var crequest = client.request('GET', path, {'host': 'www.tumblr.com'});
   crequest.on('response', function (cresponse) {
@@ -44,8 +45,9 @@ var getPage = function (email, password, offset, size, data, end) {
     parser.addListener('end', function(result) {
       var posts = (result.posts.post.length == undefined) ? [result.posts.post] : result.posts.post;
       data(posts);
-      if (posts.length < size) { return end(); }
-      getPage(email, password, offset + size, size, data, end);
+      console.log(posts.length);
+      if (posts.length < 50) { return end(); }
+      getPage(email, password, offset + 50, data, end);
     });
   });
   crequest.end();
@@ -95,7 +97,7 @@ router.get('thomblr/bookmarks.html', function (request, response) {
     '<DL><p>',
   ];
   response.write(header.join('\n') + '\n');
-  getPage(email, password, 0, 50,
+  getPage(email, password, 0,
     function (posts) {
       posts.forEach(function (post) {
         var link = tumblr.serialize(post);
